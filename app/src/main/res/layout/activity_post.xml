@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.android.firstfirebase.PostActivity">
+
+    <ImageButton
+        android:id="@+id/imageSelect"
+        android:layout_width="match_parent"
+        android:layout_height="250dp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:adjustViewBounds="false"
+        android:background="@color/grayColor"
+        android:layout_margin="5dp"
+        android:paddingLeft="80dp"
+        android:paddingRight="80dp"
+        android:src="@mipmap/ic_add_white_24dp"
+        android:scaleType="center" />
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/titleField"
+        android:background="@drawable/input_outline"
+        android:layout_below="@id/imageSelect"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="20dp"
+        android:padding="15dp"
+        android:hint="Post Title ..."/>
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/descField"
+        android:ems="10"
+        android:background="@drawable/input_outline"
+        android:inputType="textMultiLine"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/titleField"
+        android:layout_margin="20dp"
+        android:padding="15dp"
+        android:hint="Post Description ..."/>
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/submitBtn"
+        android:text="Submit Post"
+        android:textColor="#fff"
+        android:background="@color/colorPrimary"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"/>
+
+</RelativeLayout>
