@@ -26,11 +26,19 @@
         android:text="Login"
         android:layout_below="@id/loginPasswordField"/>
 
+    <com.google.android.gms.common.SignInButton
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:id="@+id/googleBtn"
+        android:layout_below="@id/loginBtn"></com.google.android.gms.common.SignInButton>
+
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/newAccountBtn"
         android:text="Need a new Account?"
-        android:layout_below="@id/loginBtn"/>
+        android:layout_alignParentBottom="true"
+        android:onClick="register"/>
 
 </RelativeLayout>

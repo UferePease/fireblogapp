@@ -13,6 +13,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -36,12 +37,16 @@ public class MainActivity extends AppCompatActivity {
 
     private DatabaseReference mDatabase;
     private DatabaseReference mDatabaseUsers;
+    private DatabaseReference mDatabaseLike;
 
-    private Query mQuery;
+    private DatabaseReference mDatabaseCurrentUser;
+
+    private Query mQueryCurrentUser;
 
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
 
+    private boolean mProcessLike = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,9 +74,17 @@ public class MainActivity extends AppCompatActivity {
 
         mDatabase = FirebaseDatabase.getInstance().getReference().child("Blog");
         mDatabaseUsers = FirebaseDatabase.getInstance().getReference().child("Users");
+        mDatabaseLike = FirebaseDatabase.getInstance().getReference().child("Likes");
+
+//        String currentUserId = mAuth.getCurrentUser().getUid();
+//
+//        mDatabaseCurrentUser = FirebaseDatabase.getInstance().getReference().child("Blog");
+//
+//        mQueryCurrentUser = mDatabaseCurrentUser.orderByChild("uid").equalTo(currentUserId);
 
         mDatabase.keepSynced(true);
         mDatabaseUsers.keepSynced(true);
+        mDatabaseLike.keepSynced(true);
 
 //        mQuery = FirebaseDatabase.getInstance().getReference().child("Blog").limitToLast(50);
 
@@ -131,16 +144,75 @@ public class MainActivity extends AppCompatActivity {
                         R.layout.blog_row,
                         BlogViewHolder.class,
                         mDatabase
+//                        mQueryCurrentUser
         ) {
-
 
             @Override
             protected void populateViewHolder(BlogViewHolder viewHolder, Blog model, int position) {
+
+                // get the key of item on the recyclerview
+                final String post_key = getRef(position).getKey();
+
                 viewHolder.setTitleString(model.getTitle());
                 viewHolder.setDesc(model.getDesc());
                 viewHolder.setImage(getApplicationContext(), model.getImage());
+                viewHolder.setUsername(model.getUsername());
 
-                Log.d(TAG, "Title: " + model.getTitle());
+                // remember to call this function to set the appropriate like button at start up
+                viewHolder.setLikeBtn(post_key);
+
+                // onClicklistener for a blog item - go to detailed view
+                viewHolder.mView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+
+                        Intent detailBlogIntent = new Intent(MainActivity.this, BlogDetailActivity.class);
+                        detailBlogIntent.putExtra("blog_id", post_key);
+                        startActivity(detailBlogIntent);
+                    }
+                });
+
+                // onClicklistener for the like button
+                viewHolder.mLikeBtn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+
+                        mProcessLike = true;
+
+                        // use valueEventListener to retrieve like data from db
+
+                        mDatabaseLike.addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                                if (mProcessLike) {
+
+                                    // check if user already liked the post
+                                    if (dataSnapshot.child(post_key).hasChild(mAuth.getCurrentUser().getUid())){
+
+                                        // if already liked, unlike the post, by removing the child
+                                        // Note: removing a child's value in firebase automatically removes the key too
+                                        mDatabaseLike.child(post_key).child(mAuth.getCurrentUser().getUid()).removeValue();
+
+                                        mProcessLike = false;
+
+                                    }else {
+                                        // if not store the new like
+                                        mDatabaseLike.child(post_key).child(mAuth.getCurrentUser().getUid()).setValue("Liked");
+
+                                        mProcessLike = false;
+                                    }
+                                }
+
+                            }
+
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+
+                            }
+                        });
+                    }
+                });
             }
         };
 
@@ -223,10 +295,61 @@ public class MainActivity extends AppCompatActivity {
 
         View mView;
 
+        ImageButton mLikeBtn;
+
+        TextView post_username;     // we want to set an onClickListener to a post's username
+
+        DatabaseReference mDatabaseLike;
+        FirebaseAuth mAuth;
+
         public BlogViewHolder(View itemView) {
             super(itemView);
 
             mView = itemView;
+
+            mLikeBtn = (ImageButton) mView.findViewById(R.id.like_btn);
+
+            mDatabaseLike = FirebaseDatabase.getInstance().getReference().child("Likes");
+            mAuth = FirebaseAuth.getInstance();
+
+            mDatabaseLike.keepSynced(true);     // helps work faster with slower connection
+
+            post_username = (TextView) mView.findViewById(R.id.post_username);
+
+            // onclicklistener for a post's user/owner
+            post_username.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+
+                    Log.d(TAG, "Username Clicked");
+                }
+            });
+        }
+
+        public void setLikeBtn(final String post_key){
+
+            // for realtime operation, we use the addValueEventListener
+            mDatabaseLike.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+
+                    // check that user has liked the post
+                    if (dataSnapshot.child(post_key).hasChild(mAuth.getCurrentUser().getUid())){
+
+                        // change the button image (blue tint)
+                        mLikeBtn.setImageResource(R.mipmap.ic_action_like_blue);
+                    }else {
+
+                        // change the button image (gray tint)
+                        mLikeBtn.setImageResource(R.mipmap.ic_action_like);
+                    }
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
         }
 
         public void setTitleString(String title){
@@ -239,6 +362,11 @@ public class MainActivity extends AppCompatActivity {
 
             TextView post_desc = (TextView) mView.findViewById(R.id.post_desc);
             post_desc.setText(desc);
+        }
+
+        public void setUsername(String username){
+
+            post_username.setText(username);
         }
 
         public void setImage(Context ctx, String img){

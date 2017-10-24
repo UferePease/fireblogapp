@@ -2,6 +2,7 @@ package com.android.firstfirebase;
 
 import android.app.Application;
 
+import com.google.firebase.FirebaseApp;
 import com.google.firebase.database.FirebaseDatabase;
 import com.squareup.picasso.OkHttpDownloader;
 import com.squareup.picasso.Picasso;
@@ -15,6 +16,12 @@ public class SimpleBlog extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+
+//        if (!FirebaseApp.getApps(this).isEmpty()){
+//
+//            // enable offline capabilities of firebase
+//            FirebaseDatabase.getInstance().setPersistenceEnabled(true);
+//        }
 
         // enable offline capabilities of firebase
         FirebaseDatabase.getInstance().setPersistenceEnabled(true);

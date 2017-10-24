@@ -10,7 +10,7 @@
 
         <ImageView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="200dp"
             android:id="@+id/post_image"
             android:scaleType="centerCrop"
             android:adjustViewBounds="true"/>
@@ -32,6 +32,60 @@
             android:paddingLeft="15dp"
             android:paddingRight="15dp"
             android:paddingBottom="15dp"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="0dp"
+                android:layout_height="60dp"
+                android:layout_weight="1"
+                android:id="@+id/post_userImage"/>
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:id="@+id/post_username"
+                android:text="username"
+                android:padding="10dp"
+                android:textSize="12dp"
+                android:textStyle="bold"/>
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:id="@+id/post_postDate"
+                android:text="username"
+                android:padding="10dp"
+                android:textSize="12dp"
+                android:textStyle="italic"
+                android:gravity="right"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:src="@mipmap/ic_action_like"
+                android:tint="@color/colorPrimary"
+                android:background="#ffffff"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginBottom="10dp"
+                android:id="@+id/like_btn"/>
+
+        </LinearLayout>
+
+
 
     </LinearLayout>
 

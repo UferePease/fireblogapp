@@ -90,7 +90,7 @@ public class RegisterActivity extends AppCompatActivity {
                         mProgress.dismiss();
 
                         //redirect to mainActivity
-                        Intent mainIntent = new Intent(RegisterActivity.this, MainActivity.class);
+                        Intent mainIntent = new Intent(RegisterActivity.this, LoginActivity.class);
                         mainIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         startActivity(mainIntent);
                     }
